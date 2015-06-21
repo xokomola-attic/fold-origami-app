@@ -17,6 +17,12 @@ import module namespace res = 'http://xokomola.com/xquery/fold/response'
     at 'fold/core/response.xqm';
 import module namespace μ = 'http://xokomola.com/xquery/origami/μ'
     at 'origami/mu.xqm'; 
+import module namespace wrap = 'http://xokomola.com/xquery/fold/middleware'
+    at 'fold/core/middleware.xqm';
+import module namespace handler = 'http://xokomola.com/xquery/fold/handler'
+    at 'fold/core/handler.xqm';
+import module namespace req = 'http://xokomola.com/xquery/fold/request'
+    at 'fold/core/request.xqm';
 
 declare variable $app:landing-content as element(page) :=
     <page>
@@ -64,9 +70,25 @@ declare function app:routes()
 
 declare variable $app:routes := (
     context('/math', $app:sum-routes),
+    (: sniffer is pretty expensive and almost triples the response time :)
+    (: wrap:sniffer(context('/simple',        $app:simple-routes)), :)
+    context('/simple',        $app:simple-routes),
+    GET(('/pingpong/{turns}', map { 'turns': '\d+' }), app:pingpong(app:bat('ping'), app:bat('pong'), 'turns')),
     GET('/', function($req) {
         app:landing-page($app:landing-content) 
-    })    
+    }),
+    (: we never get here e.g. with /lsdkfjl :)
+    not-found(<not-found>No more examples for you!</not-found>)    
+);
+
+declare variable $app:simple-routes := (
+    GET('/greeting/{name}', function($request) { res:ok('Hello ' || req:get-param($request, 'name') || '!') }),
+    GET('/dump',            wrap:params(handler:dump#1)),
+    GET('/context',         function($request) { res:ok(inspect:context()) }),
+    GET('/txt',             function($request) { 'hello i am ', ' just a string' }),
+    GET('/xml',             function($request) { <hello><world/></hello> }),
+    POST('/post',           wrap:params(handler:dump#1)),
+    not-found(<not-found>No more examples for you!</not-found>)
 );
 
 declare variable $app:sum-routes := (
@@ -79,6 +101,45 @@ declare function app:sum($x as xs:integer, $y as xs:integer) {
     'Sum is: ' || $x + $y
 };
 
+(:~
+ : A silly ping-pong game.
+ :
+ : /examples/pingpong/40 
+ : starts a game of 40 turns between two players.
+ :)
+declare function app:pingpong($h1, $h2, $turns) {
+    function($request) {
+        let $n := xs:integer($request('params')($turns))
+        return
+            res:ok(hof:until(
+                function($x) { $x('hits') eq $n }, 
+                app:play($h2, $h1), 
+                map:merge(($request, map { 'hits': 0 }))
+            )('body'))
+    }
+};
+
+(:~ Makes a pingpong bat :)
+declare function app:bat($sound as xs:string) {
+    function($request) {
+        let $body := 
+            $request('body') || $sound || ' #' || $request('hits') || '&#10;'
+        return
+            map:merge(($request, map { 'body': $body })) }
+};
+
+(:~ Take turns between player 1 and 2 :)
+declare function app:play($h1, $h2)  {
+    function($request) {
+        let $request := map:merge(($request, map { 'hits': $request('hits') + 1 }))
+        return
+            if ($request('hits') mod 2 = 0) then
+                $h1($request) 
+            else
+                $h2($request)
+    }
+};
+
 declare function app:landing-page($content)
 {
     app:page(['h:body',
@@ -87,7 +148,7 @@ declare function app:landing-page($content)
                 ['h:div', map { 'class': 'row' },
                     ['h:div', map { 'class': 'one-half column' },
                         ['h:h4', map { 'class': 'hero-heading' },
-                            μ:content($content/hero/h)],
+                            μ:content($content/hero/h) ],
                         for $link in $content/hero/a
                         return
                             ['h:a', map { 'class': 'button button-primary', 'href': fn:string($link/@href) },
