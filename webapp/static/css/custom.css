@@ -1,0 +1,20 @@
+.values {
+  background-image: url('/static/images/values-bg.jpg');
+  background-size: cover;
+  color: #fff;
+  padding-bottom: 5rem;
+  padding-top: 2rem;
+}
+
+.section {
+    padding-top: 2rem;
+    padding-bottom: 5rem;
+}
+
+.categories {
+  background-image: url('/static/images/values-bg.jpg');
+  background-size: cover;
+  color: #fff;
+  padding-bottom: 5rem;
+  padding-top: 2rem;
+}
