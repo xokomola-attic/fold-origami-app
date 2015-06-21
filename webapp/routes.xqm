@@ -7,14 +7,19 @@ xquery version "3.0";
  : @author Marc van Grootel
  : @see https://github.com/xokomola/fold-app
  :)
-module namespace app ='http://xokomola.com/xquery/fold-app';
+module namespace app ='http://xokomola.com/xquery/fold';
 
 declare default function namespace 'http://xokomola.com/xquery/fold/routes';
 
 import module namespace route = 'http://xokomola.com/xquery/fold/routes'
-    at '../fold/routes.xqm';
+    at 'fold/core/routes.xqm';
 
 (: ---- /math service ---- :)
+
+declare function app:routes()
+{
+    route:route($app:routes)
+};
 
 declare variable $app:routes := (
     context('/math', $app:sum-routes)  
