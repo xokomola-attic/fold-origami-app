@@ -50,14 +50,14 @@ declare variable $app:landing-content as element(page) :=
             </col>
         </values>
         <help>
+            <h>Demos</h>
+            <p>Try out various demos</p>
+            <a href="/static/react-jquery.html">Start now!</a>
+        </help>
+        <categories>
             <h>Need help getting started?</h>
             <p>Learn how to build web applications using Origami and Fold.</p>
             <a href="http://xokomola.com">View tutorials</a>
-        </help>
-        <categories>
-            <h>Demos</h>
-            <p>Try out various demos</p>
-            <a href="/math/sum/10/20">Start now!</a>
         </categories>
     </page>;
     
@@ -98,7 +98,12 @@ declare variable $app:sum-routes := (
 );
 
 declare function app:sum($x as xs:integer, $y as xs:integer) { 
-    'Sum is: ' || $x + $y
+    map {
+        'op1': $x, 
+        'op2': $y, 
+        'op': '+', 
+        'result': $x + $y
+    }
 };
 
 (:~

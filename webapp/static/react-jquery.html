@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>React with jQuery</title>
+        <script src="https://fb.me/react-0.13.3.js"></script>
+        <script src="https://fb.me/JSXTransformer-0.13.3.js"></script>
+        <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+        <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+        <link href="http://fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="/static/css/normalize.css" />
+        <link rel="stylesheet" href="/static/css/skeleton.css" />
+        <link rel="stylesheet" href="/static/css/custom.css" />
+            
+    </head>
+    <body>
+        <div class="container">
+            <!-- see https://facebook.github.io/react/docs/tutorial.html -->
+            <div id="example"></div>
+        </div>
+        <script type="text/jsx">
+            var CalcBox = React.createClass({
+                render: function() {
+                    return (
+                        <div className="calcBox">
+                            <h1>Calc demo</h1>
+                            <CalcForm />
+                            <HelloCalc source="http://localhost:8984/math/sum/10/30"/>
+                        </div>
+                    );
+                }
+            });
+            var CalcForm = React.createClass({
+                render: function() {
+                    return (
+                        <div className="calcForm">
+                            <form>
+                                <input name="op1" value="20" />
+                                <span> + </span>
+                                <input name="op2" value="30" />
+                            </form>
+                        </div>
+                    );
+                }
+            });
+            var HelloCalc = React.createClass({
+              getInitialState: function() {
+                return {
+                  op1: 'x',
+                  op2: 'y',
+                  op: '+',
+                  result: 'z'
+                };
+              },
+            
+              componentDidMount: function() {
+                $.get(this.props.source, function(result) {
+                  var calc = result;
+                  if (this.isMounted()) {
+                    this.setState({
+                      op1: calc.op1,
+                      op2: calc.op2,
+                      op: calc.op,
+                      result: calc.result
+                    });
+                  }
+                }.bind(this));
+              },
+            
+              render: function() {
+                return (
+                  <div className="helloCalc">
+                    <span>{this.state.op1}</span>
+                    <span>{this.state.op}</span>
+                    <span>{this.state.op2}</span>
+                    <span>=</span>
+                    <span>{this.state.result}</span>
+                  </div>
+                );
+              }
+            });
+
+          React.render(
+            <CalcBox/>,
+            document.getElementById('example')
+          );
+        </script>
+    </body>
+</html>

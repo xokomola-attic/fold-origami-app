@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>React with Angular</title>
+        <script src="https://fb.me/react-0.13.3.js"></script>
+        <script src="https://fb.me/JSXTransformer-0.13.3.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.js"></script>
+        <script src="/static/ngReact.js"></script>
+    </head>
+    <body>
+        <div id="example"></div>
+        <div ng-app="app">
+            <p>This is your first angular expression: {{ 1 + 2 }}</p>
+             <div ng-controller="MyCtrl">
+                <p>{{calc.op1}} {{calc.op}} {{calc.op2}} = {{calc.result}}</p>
+            </div> 
+        </div>
+        <script type="text/jsx">
+            var HelloCalc = React.createClass({
+              getInitialState: function() {
+                return {
+                  op1: 'x',
+                  op2: 'y',
+                  op: '+',
+                  result: 'z'
+                };
+              },
+            
+              componentDidMount: function() {
+                $http.get(this.props.source).then(function(result) {
+                  var calc = result.data;
+                  if (this.isMounted()) {
+                    this.setState({
+                      op1: calc.op1,
+                      op2: calc.op2,
+                      op: calc.op,
+                      result: calc.result
+                    });
+                  }
+                }).bind(this);
+              },
+            
+              render: function() {
+                return (
+                  <p>
+                    <span>{this.state.op1}</span>
+                    <span>{this.state.op}</span>
+                    <span>{this.state.op2}</span>
+                    <span>=</span>
+                    <span>{this.state.result}</span>
+                  </p>
+                );
+              }
+            });
+
+          React.render(
+            <HelloCalc source="http://localhost:8984/math/sum/10/30"/>,
+            document.getElementById('example')
+          );
+        </script>
+        <script>
+            angular.module('app', ['react'])
+            .factory('myService', function($http) {
+               return {
+                    getCalc: function() {
+                         //return the promise directly.
+                         return $http.get('http://localhost:8984/math/sum/10/30')
+                                   .then(function(result) {
+                                        //resolve the promise as the data
+                                        return result.data;
+                                    });
+                    }
+               }
+            })
+            .controller('MyCtrl', function($scope, myService) {
+                myService.getCalc().then(function(calc) {
+                    $scope.calc = calc;
+                });
+            })
+        </script>
+    </body>
+</html>
