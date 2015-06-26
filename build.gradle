@@ -1,0 +1,58 @@
+apply plugin: 'application'
+apply plugin: 'java'
+
+def applicationVersion = '0.1'
+def baseXVersion = '8.2.2-SNAPSHOT'
+def jettyVersion = '8.1.16.v20140903'
+def saxonVersion = '9.6.0-4'
+def tagSoupVersion = '1.2.1'
+
+repositories {
+    maven { url "http://files.basex.org/maven" }
+    mavenCentral()
+}
+
+applicationName = 'webapp-demo'
+version = applicationVersion
+mainClassName = 'org.basex.BaseXHTTP'
+applicationDefaultJvmArgs = [
+    "-Dorg.basex.dbpath=$DBPATH",
+    "-Dorg.basex.repopath=$REPOPATH",
+    "-Dorg.basex.webpath=$WEBPATH",
+    "-Dorg.basex.mixupdates=$MIXUPDATES",
+    "-Dorg.basex.cacherestxq=$CACHERESTXQ"]
+
+dependencies {
+    runtime "org.basex:basex-api:$baseXVersion"
+    // HTTP server
+    runtime "org.eclipse.jetty:jetty-server:$jettyVersion"
+    runtime "org.eclipse.jetty:jetty-webapp:$jettyVersion"
+    // XSLT 2.0
+    runtime "net.sf.saxon:Saxon-HE:$saxonVersion"
+    // HTML parsing
+    runtime "org.ccil.cowan.tagsoup:tagsoup:$tagSoupVersion"
+}
+
+// alias for gradlew run
+task start(dependsOn: run) {
+    description "Run BaseX HTTP and database server."
+}
+
+task stop(type: JavaExec) {
+    description "Stop BaseX HTTP and database server."
+    classpath configurations.runtime
+    main = "org.basex.BaseXHTTP"
+    args "stop"
+    systemProperties System.getProperties()
+}
+
+// start a gui with this basex version
+task gui << {
+    ant.java(
+        fork: true, 
+        spawn: true, 
+        classpath: configurations.runtime.asPath, 
+        classname: "org.basex.BaseXGUI",
+        clonevm: true)
+}
+gui.description "Run BaseX GUI."
