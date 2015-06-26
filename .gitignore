@@ -1,4 +1,9 @@
+.gradle/
 _tmp/
+data/
+repo/
+build/
 webapp/origami/
 webapp/fold/
 project.xpr
+TODO.md
