@@ -1,0 +1,35 @@
+<html lang="en" data-framework="react" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>XQuery - React - TodoMVC</title>
+        <link rel="stylesheet" href="css/base.css" />
+        <link rel="stylesheet" href="css/index.css" />
+        <link href="http://fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="/static/css/normalize.css" />
+        <link rel="stylesheet" href="/static/css/skeleton.css" />
+        <link rel="stylesheet" href="/static/css/custom.css" />
+    </head>
+    <body>
+        <section id="todoapp"></section>
+        <footer id="info">
+            <p>Double-click to edit a todo</p>
+            <p>Created by <a href="http://github.com/petehunt/">petehunt</a></p>
+            <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+        </footer>
+        
+        <script src="https://fb.me/react-0.13.3.js"></script>
+        <script src="https://fb.me/JSXTransformer-0.13.3.js"></script>
+        <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+        <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+        
+        <script src="js/utils.js"></script>
+        <script src="js/todoModel.js"></script>
+        <!-- jsx is an optional syntactic sugar that transforms methods in React's
+		`render` into an HTML-looking format. Since the two models above are
+		unrelated to React, we didn't need those transforms. -->
+        <script type="text/jsx" src="js/todoItem.jsx"></script>
+        <script type="text/jsx" src="js/footer.jsx"></script>
+        <script type="text/jsx" src="js/app.jsx"></script>
+    </body>
+</html>
