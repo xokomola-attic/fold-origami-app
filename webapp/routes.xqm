@@ -69,7 +69,8 @@ declare function app:routes()
 };
 
 declare variable $app:routes := (
-    context('/math', $app:sum-routes),
+    context('/demo/math', $app:sum-routes),
+    context('/demo/todo', $app:todo-routes),
     (: sniffer is pretty expensive and almost triples the response time :)
     (: wrap:sniffer(context('/simple',        $app:simple-routes)), :)
     context('/simple',        $app:simple-routes),
@@ -77,8 +78,11 @@ declare variable $app:routes := (
     GET('/', function($req) {
         app:landing-page($app:landing-content) 
     }),
-    (: we never get here e.g. with /lsdkfjl :)
     not-found(<not-found>No more examples for you!</not-found>)    
+);
+
+declare variable $app:todo-routes := (
+    GET('/', wrap:content-type(wrap:file(function($request) { res:redirect('/') }, fn:concat(file:base-dir(), 'demo/todomvc'))))
 );
 
 declare variable $app:simple-routes := (
