@@ -17,6 +17,8 @@ import module namespace res = 'http://xokomola.com/xquery/fold/response'
     at 'fold/core/response.xqm';
 import module namespace μ = 'http://xokomola.com/xquery/origami/μ'
     at 'origami/mu.xqm'; 
+import module namespace xf = 'http://xokomola.com/xquery/origami'
+    at 'origami/core.xqm'; 
 import module namespace wrap = 'http://xokomola.com/xquery/fold/middleware'
     at 'fold/core/middleware.xqm';
 import module namespace handler = 'http://xokomola.com/xquery/fold/handler'
@@ -52,7 +54,7 @@ declare variable $app:landing-content as element(page) :=
         <help>
             <h>Demos</h>
             <p>Try out various demos</p>
-            <a href="/static/react-jquery.html">Start now!</a>
+            <a href="/demo/templates">Start now!</a>
         </help>
         <categories>
             <h>Need help getting started?</h>
@@ -69,11 +71,12 @@ declare function app:routes()
 };
 
 declare variable $app:routes := (
-    context('/demo/math', $app:sum-routes),
-    context('/demo/todo', $app:todo-routes),
+    context('/demo/templates', $app:demos),
+    context('/demo/math', $app:math),
+    context('/demo/todo', $app:todo),
     (: sniffer is pretty expensive and almost triples the response time :)
     (: wrap:sniffer(context('/simple',        $app:simple-routes)), :)
-    context('/simple',        $app:simple-routes),
+    context('/simple',        $app:simple),
     GET(('/pingpong/{turns}', map { 'turns': '\d+' }), app:pingpong(app:bat('ping'), app:bat('pong'), 'turns')),
     GET('/', function($req) {
         app:landing-page($app:landing-content) 
@@ -81,11 +84,23 @@ declare variable $app:routes := (
     not-found(<not-found>No more examples for you!</not-found>)    
 );
 
-declare variable $app:todo-routes := (
+declare variable $app:todo := (
     GET('/', wrap:content-type(wrap:file(function($request) { res:redirect('/') }, fn:concat(file:base-dir(), 'demo/todomvc'))))
 );
 
-declare variable $app:simple-routes := (
+declare variable $app:base-page := 
+    xf:template(
+        xf:xml-resource(fn:concat(file:base-dir(),'static/base.html')), 
+        ['html:div[@class="container"]', xf:content(function($n,$c) { μ:xml($c) })],
+        function($nodes) { $nodes }
+    );
+      
+declare variable $app:demos := (
+    GET('/{name}', function($req) { res:ok($app:base-page(app:demo(req:get-param($req, 'name')))) }),
+    GET('/', function($req) { res:ok($app:base-page(app:demo())) })
+);
+
+declare variable $app:simple := (
     GET('/greeting/{name}', function($request) { res:ok('Hello ' || req:get-param($request, 'name') || '!') }),
     GET('/dump',            wrap:params(handler:dump#1)),
     GET('/context',         function($request) { res:ok(inspect:context()) }),
@@ -95,7 +110,47 @@ declare variable $app:simple-routes := (
     not-found(<not-found>No more examples for you!</not-found>)
 );
 
-declare variable $app:sum-routes := (
+declare function app:demo()
+{
+    app:demo(())
+};
+
+declare function app:demo($name as xs:string?)
+{
+    let $demo-xml := xf:xml-resource(fn:concat(file:base-dir(),'demo/templating/demos.xml'))/demos
+    let $selected-demo := ($demo-xml/demo[@name = $name], $demo-xml/demo[1])[1]
+    let $demo-name := fn:string($selected-demo/@name)
+    return
+        (
+            ['h:div', ['h:p']],
+            ['h:div', map { 'class': 'tabs' },
+                for $demo in $demo-xml/demo
+                return
+                    ['h:a', 
+                        map { 
+                            'class': ('button', ' ', if ($demo/@name = $demo-name) then 'button-primary' else ()), 
+                            'href': fn:concat('/demo/templates/', $demo/@name) }, $demo/title]
+            ],
+            let $demo := $selected-demo
+            return
+                ['h:div', map { 'class': 'example' },
+                    ['h:div', map { 'class': 'row' },
+                        ['h:div', map { 'class': 'one-half column' }, 
+                            ['h:pre', $demo/source/template/text()]], 
+                        ['h:div', map { 'class': 'one-half column' }, 
+                            ['h:pre', $demo/source/xquery/text()]]
+                    ],
+                    ['h:div', map { 'class': 'row' },
+                        ['h:div', map { 'class': 'one-half column' }, 
+                            ['h:pre', 'RESULT of template']], 
+                        ['h:div', map { 'class': 'one-half column' }, 
+                            ['h:pre', $demo/description/text()]]
+                    ]
+                ]
+        )
+};
+
+declare variable $app:math := (
     GET(('/sum/{a}/{b}', map { 'a': '\d+', 'b': '\d+' }),
         ('a|integer', 'b|integer'),
         app:sum#2)
@@ -213,6 +268,11 @@ declare function app:landing-page($content)
             ]
         ]
     ])
+};
+
+declare function app:basepage($items as array(*)?)
+{
+    'TODO'
 };
 
 declare function app:page($items as array(*)?)

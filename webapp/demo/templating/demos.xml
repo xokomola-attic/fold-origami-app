@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<demos>
+    <demo name="ex1" xml:space="preserve">
+        <title>Example 1</title>
+        <source >
+            <template>ttttmpl</template>
+            <xquery>xxxq</xquery>
+        </source>
+        <description>
+            ## Hello
+            
+            This is an *example*.
+            
+        </description>
+    </demo>
+    <demo name="ex2" xml:space="preserve">
+        <title>Example 2</title>
+        <source >
+            <template>ttttmpl</template>
+            <xquery>xxxq</xquery>
+        </source>
+        <description>
+            ## Hello
+            
+            Bla bla *example*.
+            
+        </description>
+    </demo>
+</demos>
