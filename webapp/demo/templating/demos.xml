@@ -1,21 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <demos>
-    <demo name="ex1" xml:space="preserve">
+    <demo name="ex1">
         <title>Example 1</title>
-        <source >
-            <template>ttttmpl</template>
-            <xquery>xxxq</xquery>
+        <source>
+            <template>
+                <ul>
+                    <li>item</li>
+                    <li>item</li>
+                    <li>item</li>
+                </ul>
+            </template>
+            <xquery xml:space="preserve">
+    xf:template(
+        $template, 
+        (
+            ['li[1]',
+                function($n, $c) {
+                    for $i in 1 to $c
+                    return $n => xf:content(concat($n/text(),' ',$i))
+                }
+            ],
+            ['li[position() gt 1]', ()]
+        ),
+        function($x as xs:integer) { $x }
+    );
+            </xquery>
+            <call>$demo:ex1-code(4)</call>
+            <result>
+                <ul>
+                    <li>item 1</li>
+                    <li>item 2</li>
+                    <li>item 3</li>
+                    <li>item 4</li>
+                </ul>
+            </result>
         </source>
-        <description>
-            ## Hello
+        <description xml:space="preserve">
+            ## List example
             
-            This is an *example*.
+            Build a list.
             
         </description>
     </demo>
     <demo name="ex2" xml:space="preserve">
         <title>Example 2</title>
-        <source >
+        <source>
             <template>ttttmpl</template>
             <xquery>xxxq</xquery>
         </source>
