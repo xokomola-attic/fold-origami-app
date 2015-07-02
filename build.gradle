@@ -46,7 +46,7 @@ task stop(type: JavaExec) {
     systemProperties System.getProperties()
 }
 
-task xqtest(type: JavaExec) {
+task testXQuery(type: JavaExec) {
     description "Run XQuery tests"
     inputs.file fileTree(dir: 'webapp/origami/test', include: '**/*.xqm')
     classpath configurations.runtime
@@ -54,6 +54,8 @@ task xqtest(type: JavaExec) {
     args "-t", "webapp/origami/test"
     systemProperties System.getProperties()
 }
+
+test.dependsOn testXQuery
 
 // start a gui with this basex version
 task gui << {
