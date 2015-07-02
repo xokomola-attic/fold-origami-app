@@ -11,8 +11,8 @@ import module namespace req = 'http://xokomola.com/xquery/fold/request'
     at '../../fold/core/request.xqm';
 import module namespace res = 'http://xokomola.com/xquery/fold/response'
     at '../../fold/core/response.xqm';
-import module namespace route = 'http://xokomola.com/xquery/fold/routes'
-    at '../../fold/core/routes.xqm';
+import module namespace router = 'http://xokomola.com/xquery/fold/router'
+    at '../../fold/core/router.xqm';
     
 declare variable $demo:ex1-template :=
     <ul>
@@ -40,8 +40,8 @@ declare variable $demo:ex1-code :=
     );
 
 declare variable $demo:app := (
-    route:GET('/{name}', function($req) { res:ok($ui:base-page(demo:app(req:get-param($req, 'name')))) }),
-    route:GET('/', function($req) { res:ok($ui:base-page(demo:app())) })
+    router:GET('/{name}', function($req) { res:ok($ui:base-page(demo:app(req:get-param($req, 'name')))) }),
+    router:GET('/', function($req) { res:ok($ui:base-page(demo:app())) })
 );
 
 declare function demo:app()

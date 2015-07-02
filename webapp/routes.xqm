@@ -9,10 +9,8 @@ xquery version "3.1";
  :)
 module namespace app ='http://xokomola.com/xquery/fold';
 
-declare default function namespace 'http://xokomola.com/xquery/fold/routes';
-
-import module namespace route = 'http://xokomola.com/xquery/fold/routes'
-    at 'fold/core/routes.xqm';
+import module namespace router = 'http://xokomola.com/xquery/fold/router'
+    at 'fold/core/router.xqm';
 import module namespace res = 'http://xokomola.com/xquery/fold/response'
     at 'fold/core/response.xqm';
 import module namespace wrap = 'http://xokomola.com/xquery/fold/middleware'
@@ -32,39 +30,39 @@ import module namespace ui = 'http://xokomola.com/xquery/origami/demo/ui'
 
 declare function app:routes()
 {
-    route:route($app:routes)
+    router:route($app:routes)
 };
 
 declare variable $app:routes := (
-    context('/demo/templates', $demo:app),
-    context('/demo/math', $app:math),
-    context('/demo/todo', $app:todo),
+    router:context('/demo/templates', $demo:app),
+    router:context('/demo/math', $app:math),
+    router:context('/demo/todo', $app:todo),
     (: sniffer is pretty expensive and almost triples the response time :)
     (: wrap:sniffer(context('/simple',        $app:simple-routes)), :)
-    context('/simple',        $app:simple),
-    GET(('/pingpong/{turns}', map { 'turns': '\d+' }), app:pingpong(app:bat('ping'), app:bat('pong'), 'turns')),
-    GET('/', function($req) {
+    router:context('/simple',        $app:simple),
+    router:GET(('/pingpong/{turns}', map { 'turns': '\d+' }), app:pingpong(app:bat('ping'), app:bat('pong'), 'turns')),
+    router:GET('/', function($req) {
         ui:landing-page($ui:landing-content) 
     }),
-    not-found(<not-found>No more examples for you!</not-found>)    
+    router:not-found(<not-found>No more examples for you!</not-found>)    
 );
 
 declare variable $app:todo := (
-    GET('/', wrap:content-type(wrap:file(function($request) { res:redirect('/') }, fn:concat(file:base-dir(), 'demo/todomvc'))))
+    router:GET('/', wrap:content-type(wrap:file(function($request) { res:redirect('/') }, fn:concat(file:base-dir(), 'demo/todomvc'))))
 );
 
 declare variable $app:simple := (
-    GET('/greeting/{name}', function($request) { res:ok('Hello ' || req:get-param($request, 'name') || '!') }),
-    GET('/dump',            wrap:params(handler:dump#1)),
-    GET('/context',         function($request) { res:ok(inspect:context()) }),
-    GET('/txt',             function($request) { 'hello i am ', ' just a string' }),
-    GET('/xml',             function($request) { <hello><world/></hello> }),
-    POST('/post',           wrap:params(handler:dump#1)),
-    not-found(<not-found>No more examples for you!</not-found>)
+    router:GET('/greeting/{name}', function($request) { res:ok('Hello ' || req:get-param($request, 'name') || '!') }),
+    router:GET('/dump',            wrap:params(handler:dump#1)),
+    router:GET('/context',         function($request) { res:ok(inspect:context()) }),
+    router:GET('/txt',             function($request) { 'hello i am ', ' just a string' }),
+    router:GET('/xml',             function($request) { <hello><world/></hello> }),
+    router:POST('/post',           wrap:params(handler:dump#1)),
+    router:not-found(<not-found>No more examples for you!</not-found>)
 );
 
 declare variable $app:math := (
-    GET(('/sum/{a}/{b}', map { 'a': '\d+', 'b': '\d+' }),
+    router:GET(('/sum/{a}/{b}', map { 'a': '\d+', 'b': '\d+' }),
         ('a|integer', 'b|integer'),
         app:sum#2)
 );
