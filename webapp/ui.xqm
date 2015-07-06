@@ -4,8 +4,8 @@ module namespace ui ='http://xokomola.com/xquery/origami/demo/ui';
 
 import module namespace μ = 'http://xokomola.com/xquery/origami/μ'
     at 'origami/mu.xqm'; 
-import module namespace xf = 'http://xokomola.com/xquery/origami'
-    at 'origami/core.xqm';
+import module namespace ω = 'http://xokomola.com/xquery/origami/ω'
+    at 'origami/om.xqm';
 (: TODO: these should not be in here :)
 import module namespace req = 'http://xokomola.com/xquery/fold/request'
     at 'fold/core/request.xqm';
@@ -13,9 +13,9 @@ import module namespace res = 'http://xokomola.com/xquery/fold/response'
     at 'fold/core/response.xqm';
 
 declare variable $ui:base-page := 
-    xf:template(
-        xf:xml-resource(concat(file:base-dir(),'static/base.html')), 
-        ['html:div[@class="container"]', xf:content(function($n,$c) { μ:xml($c) })],
+    ω:template(
+        ω:xml-resource(concat(file:base-dir(),'static/base.html')), 
+        ['html:div[@class="container"]', ω:content(function($n,$c) { μ:xml($c) })],
         function($nodes) { $nodes }
     );
       

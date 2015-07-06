@@ -2,8 +2,8 @@ xquery version "3.0";
 
 module namespace demo = 'http://xokomola.com/xquery/origami/templating/demos';
 
-import module namespace xf = 'http://xokomola.com/xquery/origami'
-    at '../../origami/core.xqm';
+import module namespace ω = 'http://xokomola.com/xquery/origami/ω'
+    at '../../origami/om.xqm';
 import module namespace ui = 'http://xokomola.com/xquery/origami/demo/ui'
     at '../../ui.xqm';
 (: TODO: split into view and controller :)
@@ -22,16 +22,16 @@ declare variable $demo:ex1-template :=
     </ul>;
 
 (: ISSUE: matching nodes the second rule may match even if the first is more specific :)
-(: ISSUE: I think I need something like xf:clone($n, $it) :)
-(: FIXED: xf namespace and xf:node attribute is copied as well :)
+(: ISSUE: I think I need something like ω:clone($n, $it) :)
+(: FIXED: xf namespace and ω:node attribute is copied as well :)
 declare variable $demo:ex1-code := 
-    xf:template(
+    ω:template(
         $demo:ex1-template, 
         (
             ['li[1]',
                 function($n, $c) {
                     for $i in 1 to $c
-                    return $n => xf:content(concat($n/text(),' ',$i))
+                    return $n => ω:content(concat($n/text(),' ',$i))
                 }
             ],
             ['li[position() gt 1]', ()]
@@ -51,7 +51,7 @@ declare function demo:app()
 
 declare function demo:app($name as xs:string?)
 {
-    let $demo-xml := xf:xml-resource(concat(file:base-dir(),'demos.xml'))/demos
+    let $demo-xml := ω:xml-resource(concat(file:base-dir(),'demos.xml'))/demos
     let $selected-demo := ($demo-xml/demo[@name = $name], $demo-xml/demo[1])[1]
     let $demo-name := string($selected-demo/@name)
     return
