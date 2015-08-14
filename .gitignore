@@ -4,6 +4,9 @@ data/
 repo/
 build/
 webapp/origami/
-webapp/fold/
+.basex
+.basexgui
+webapp/tablas/
+webapp/xmld/
 project.xpr
 TODO.md

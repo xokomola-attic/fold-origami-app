@@ -4,8 +4,11 @@ module namespace ui ='http://xokomola.com/xquery/origami/demo/ui';
 
 import module namespace μ = 'http://xokomola.com/xquery/origami/μ'
     at 'origami/mu.xqm'; 
+import module namespace λ = 'http://xokomola.com/xquery/origami/λ'
+    at 'origami/lambda.xqm';
 import module namespace ω = 'http://xokomola.com/xquery/origami/ω'
-    at 'origami/om.xqm';
+    at 'origami/omega.xqm';
+
 (: TODO: these should not be in here :)
 import module namespace req = 'http://xokomola.com/xquery/fold/request'
     at 'fold/core/request.xqm';
@@ -15,7 +18,7 @@ import module namespace res = 'http://xokomola.com/xquery/fold/response'
 declare variable $ui:base-page := 
     ω:template(
         ω:xml-resource(concat(file:base-dir(),'static/base.html')), 
-        ['html:div[@class="container"]', ω:content(function($n,$c) { μ:xml($c) })],
+        ['html:div[@class="container"]', λ:content(function($n,$c) { μ:xml($c) })],
         function($nodes) { $nodes }
     );
       
@@ -64,11 +67,11 @@ declare function ui:landing-page($content)
                 ['h:div', map { 'class': 'row' },
                     ['h:div', map { 'class': 'one-half column' },
                         ['h:h4', map { 'class': 'hero-heading' },
-                            μ:content($content/hero/h) ],
+                            λ:content($content/hero/h) ],
                         for $link in $content/hero/a
                         return
                             ['h:a', map { 'class': 'button button-primary', 'href': string($link/@href) },
-                                μ:content($link)]
+                                λ:content($link)]
                     ],
                     ['h:div', map { 'class': 'one-half column phones' },
                         ['h:img', map { 'class': 'phone', 'src': '/static/logo240.png' }]
@@ -83,8 +86,8 @@ declare function ui:landing-page($content)
                     for $sect in $content/values/col
                     return
                         ['h:div', map { 'class': 'one-third column value' },
-                            ['h:h4', map { 'class': 'value-heading' }, μ:content($sect/h)],
-                            ['h:p', map { 'class': 'value-description' }, μ:content($sect/p)]
+                            ['h:h4', map { 'class': 'value-heading' }, λ:content($sect/h)],
+                            ['h:p', map { 'class': 'value-description' }, λ:content($sect/p)]
                         ]
                 ],
                 ['h:div', map { 'class': 'row' },
@@ -94,7 +97,7 @@ declare function ui:landing-page($content)
                             for $link in $sect/a
                             return
                                 ['h:a', map { 'class': 'button button-primary', 'href': string($link/@href) },
-                                    μ:content($link)]
+                                    λ:content($link)]
                         ]
 
                 ]
@@ -103,20 +106,20 @@ declare function ui:landing-page($content)
         
         ['h:div', map { 'class': 'section get-help' },
             ['h:div', map { 'class': 'container' },
-                ['h:h3', map { 'class': 'section-heading' }, μ:content($content/help/h)],
-                ['h:p', map { 'class': 'section-description' }, μ:content($content/help/p)],
+                ['h:h3', map { 'class': 'section-heading' }, λ:content($content/help/h)],
+                ['h:p', map { 'class': 'section-description' }, λ:content($content/help/p)],
                 ['h:a', map { 'class': 'button button-primary', 'href': string($content/help/a/@href) },
-                    μ:content($content/help/a)]
+                    λ:content($content/help/a)]
             ]
         ],
         
         ['h:div', map { 'class': 'section categories' },
             ['h:div', map { 'class': 'container' },
-                ['h:h3', map { 'class': 'section-heading' }, μ:content($content/categories/h)],
+                ['h:h3', map { 'class': 'section-heading' }, λ:content($content/categories/h)],
                 ['h:p', map { 'class': 'section-description' },
-                    μ:content($content/categories/p)],
+                    λ:content($content/categories/p)],
                 ['h:a', map { 'class': 'button button-primary', 'href': string($content/categories/a/@href) },
-                    μ:content($content/categories/a)]
+                    λ:content($content/categories/a)]
             ]
         ]
     ])

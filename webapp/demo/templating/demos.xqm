@@ -3,7 +3,10 @@ xquery version "3.0";
 module namespace demo = 'http://xokomola.com/xquery/origami/templating/demos';
 
 import module namespace ω = 'http://xokomola.com/xquery/origami/ω'
-    at '../../origami/om.xqm';
+    at '../../origami/omega.xqm';
+import module namespace λ = 'http://xokomola.com/xquery/origami/λ'
+    at '../../origami/lambda.xqm';
+
 import module namespace ui = 'http://xokomola.com/xquery/origami/demo/ui'
     at '../../ui.xqm';
 (: TODO: split into view and controller :)
@@ -31,7 +34,7 @@ declare variable $demo:ex1-code :=
             ['li[1]',
                 function($n, $c) {
                     for $i in 1 to $c
-                    return $n => ω:content(concat($n/text(),' ',$i))
+                    return $n => λ:content(concat($n/text(),' ',$i))
                 }
             ],
             ['li[position() gt 1]', ()]
